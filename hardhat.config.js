@@ -15,9 +15,17 @@ module.exports = {
     },
   },
   networks: {
-    rinkeby: {
+    hardhat: {
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000,
+    },
+    ropsten: {
       url: RINKEBY_API_URL,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: {
+        mnemonic: PRIVATE_KEY,
+      },
     },
   },
   etherscan: {
