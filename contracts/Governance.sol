@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
+
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/governance/Governor.sol";
@@ -11,7 +12,7 @@ import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.so
 contract Governance is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction, GovernorTimelockControl {
     constructor(IVotes _token, TimelockController _timelock)
         Governor("MyGovernor")
-        GovernorSettings(1 /* 1 block */, 45818 /* 1 week */, 0)
+        GovernorSettings(0 /* 1 block */, 20 /* 1 week */, 0)
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(4)
         GovernorTimelockControl(_timelock)
