@@ -1,6 +1,9 @@
 const hre = require('hardhat');
 
 async function main() {
+  [proposer, executor, vote1, vote2, vote3, vote4, vote5] =
+    await ethers.getSigners();
+
   const NappyToken = await hre.ethers.getContractFactory('NappyToken');
   const nappyToken = await NappyToken.deploy();
 
@@ -9,7 +12,11 @@ async function main() {
   console.log('NappyToken deployed to:', nappyToken.address);
 
   const TimeLock = await hre.ethers.getContractFactory('TimeLock');
-  const timeLock = await TimeLock.deploy(1, [], []);
+  const timeLock = await TimeLock.deploy(
+    1,
+    [],
+    ['0x0000000000000000000000000000000000000000']
+  );
 
   await timeLock.deployed();
 
@@ -32,6 +39,20 @@ async function main() {
   await locker.deployed();
 
   console.log('Locker deployed to:', locker.address);
+
+  await locker.transferOwnership(timeLock.address);
+
+  await nappyToken.mint(vote1.address, 100000000);
+  await nappyToken.mint(vote2.address, 100000000);
+  await nappyToken.mint(vote3.address, 100000000);
+  await nappyToken.mint(vote4.address, 100000000);
+
+  await nappyToken.connect(vote1).delegate(vote1.address);
+  await nappyToken.connect(vote2).delegate(vote2.address);
+  await nappyToken.connect(vote3).delegate(vote3.address);
+  await nappyToken.connect(vote4).delegate(vote4.address);
+
+  await timeLock.grantRole(await timeLock.PROPOSER_ROLE(), governance.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
