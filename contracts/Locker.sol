@@ -6,19 +6,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Locker is Ownable {
 
-    uint256 public totalFunds;
-    address public pay;
-    bool public isReleased;
+receive() external payable{}
 
-    constructor(address _pay) payable {
-        totalFunds = msg.value;
-        pay = _pay;
-        isReleased = false;
+    constructor()  {
     }
 
 
-    function withdrawFunds() public onlyOwner {
-        isReleased = true;
-        payable(pay).transfer(totalFunds);
+    function withdrawFunds(address pay, uint256 amount) public onlyOwner {
+        // isReleased = true;
+        payable(pay).transfer(amount);
     }
 }
