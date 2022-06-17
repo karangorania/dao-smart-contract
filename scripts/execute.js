@@ -1,11 +1,11 @@
 const hre = require('hardhat');
 const { ethers } = require('hardhat');
 
-const GOVERNANCE_ADDRESS = '0x47F88eeA94bA9D50D2f6A7e4fC734C2792dbD01D';
-const LOCKER_ADDRESS = '0xFD28e6B4b91B3D1E2664577226105720567b8448';
+const GOVERNANCE_ADDRESS = '0x032BA118F762c78dD254064F42C1B9dd9205731A';
+const LOCKER_ADDRESS = '0xF6BFeFAdD008FBF7F5F3b54E3ec5d1403967ac8f';
 
 const propId =
-  '8248301548580824015364459237635209329049600785932343324222339379515500855878';
+  '6710164757546047754297806568396090581956979312861437213151479767075350705109';
 
 async function main() {
   [proposer, executor, vote1, vote2, vote3, vote4, vote5] =
@@ -20,7 +20,12 @@ async function main() {
   const executePropose = await governance.execute(
     [LOCKER_ADDRESS],
     [0],
-    [locker.interface.encodeFunctionData('withdrawFunds')],
+    [
+      locker.interface.encodeFunctionData('withdrawFunds', [
+        proposer.address,
+        ethers.utils.parseUnits('1', 18),
+      ]),
+    ],
     ethers.utils.keccak256(ethers.utils.toUtf8Bytes('Donation Demo'))
   );
 
