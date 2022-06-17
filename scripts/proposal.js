@@ -1,8 +1,8 @@
 const { ethers } = require('hardhat');
 const hre = require('hardhat');
 
-const GOVERNANCE_ADDRESS = '0x47F88eeA94bA9D50D2f6A7e4fC734C2792dbD01D';
-const LOCKER_ADDRESS = '0xFD28e6B4b91B3D1E2664577226105720567b8448';
+const GOVERNANCE_ADDRESS = '0x032BA118F762c78dD254064F42C1B9dd9205731A';
+const LOCKER_ADDRESS = '0xF6BFeFAdD008FBF7F5F3b54E3ec5d1403967ac8f';
 
 // const propId ='';
 
@@ -20,7 +20,12 @@ async function main() {
   const callPropose = await governance.propose(
     [LOCKER_ADDRESS],
     [0],
-    [await locker.interface.encodeFunctionData('withdrawFunds')],
+    [
+      await locker.interface.encodeFunctionData('withdrawFunds', [
+        proposer.address,
+        ethers.utils.parseUnits('1', 18),
+      ]),
+    ],
     'Donation Demo'
   );
   // console.log(locker.interface.encodeFunctionData('withdrawFunds', []));
