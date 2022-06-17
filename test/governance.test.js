@@ -15,7 +15,7 @@ describe('Governance', () => {
   let propId;
 
   beforeEach(async () => {
-    [proposer, executor, vote1, vote2, vote3, vote4, vote5] =
+    [owner, proposer, executor, vote1, vote2, vote3, vote4, vote5] =
       await ethers.getSigners();
 
     // NappyToken contract
@@ -43,9 +43,19 @@ describe('Governance', () => {
     // Locker Contract (wallet address for accept the ETH or withdraw)
     walletAddress = '0xb41b7589ae02a4594cd9314f6b500b387027250b';
     Locker = await hre.ethers.getContractFactory('Locker');
-    locker = await Locker.deploy(walletAddress);
+    locker = await Locker.deploy();
 
     await locker.deployed();
+
+    // send ether to locker
+    const transactionHash = await owner.sendTransaction({
+      to: locker.address,
+      value: ethers.utils.parseEther('1.0'),
+    });
+
+    await transactionHash.wait();
+
+    console.log(transactionHash);
 
     await locker.transferOwnership(timeLock.address);
 
@@ -94,7 +104,12 @@ describe('Governance', () => {
     const txnPro = await governance.propose(
       [locker.address],
       [0],
-      [locker.interface.encodeFunctionData('withdrawFunds', [])],
+      [
+        locker.interface.encodeFunctionData('withdrawFunds', [
+          owner.address,
+          ethers.utils.parseUnits('6', 18),
+        ]),
+      ],
       'Donation Demo'
     );
 
@@ -114,7 +129,12 @@ describe('Governance', () => {
     const txnPro = await governance.propose(
       [locker.address],
       [0],
-      [locker.interface.encodeFunctionData('withdrawFunds', [])],
+      [
+        locker.interface.encodeFunctionData('withdrawFunds', [
+          owner.address,
+          ethers.utils.parseUnits('1', 18),
+        ]),
+      ],
       'Donation Demo'
     );
 
@@ -128,26 +148,41 @@ describe('Governance', () => {
     await governance.connect(vote3).castVote(propId, 1);
     await governance.connect(vote4).castVote(propId, 1);
 
+    // await network.provider.send('evm_mine');
+    // await network.provider.send('evm_mine');
+    // await network.provider.send('evm_mine');
     await network.provider.send('evm_mine');
-    await network.provider.send('evm_mine');
+    // await network.provider.send('evm_mine');
 
     await governance.queue(
       [locker.address],
       [0],
-      [locker.interface.encodeFunctionData('withdrawFunds', [])],
+      [
+        locker.interface.encodeFunctionData('withdrawFunds', [
+          owner.address,
+          ethers.utils.parseUnits('1', 18),
+        ]),
+      ],
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes('Donation Demo'))
     );
 
     const propState = await governance.state(propId);
     console.log(propState);
 
+    await network.provider.send('evm_mine');
+
     await governance.execute(
       [locker.address],
       [0],
-      [locker.interface.encodeFunctionData('withdrawFunds', [])],
+      [
+        locker.interface.encodeFunctionData('withdrawFunds', [
+          owner.address,
+          ethers.utils.parseUnits('1', 18),
+        ]),
+      ],
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes('Donation Demo'))
     );
-    expect(await governance.state());
+    // expect(await governance.state());
 
     const propState1 = await governance.state(propId);
     console.log(propState1);
