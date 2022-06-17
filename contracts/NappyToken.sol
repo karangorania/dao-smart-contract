@@ -1,22 +1,38 @@
-//SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: GPL-3.0
 
-import "hardhat/console.sol";
+pragma solidity ^0.8.4;
 
-contract Greeter {
-    string private greeting;
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-    constructor(string memory _greeting) {
-        console.log("Deploying a Greeter with greeting:", _greeting);
-        greeting = _greeting;
+contract NappyToken is ERC20, ERC20Permit, ERC20Votes {
+    constructor() ERC20("NappyToken", "NPY") ERC20Permit("MyToken") {}
+
+    // The functions below are overrides required by Solidity.
+
+    function _afterTokenTransfer(address from, address to, uint256 amount)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        super._afterTokenTransfer(from, to, amount);
     }
 
-    function greet() public view returns (string memory) {
-        return greeting;
+    function _mint(address to, uint256 amount)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        super._mint(to, amount);
     }
 
-    function setGreeting(string memory _greeting) public {
-        console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
-        greeting = _greeting;
+    function _burn(address account, uint256 amount)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        super._burn(account, amount);
     }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount * 10 ** decimals());
+    } 
 }
