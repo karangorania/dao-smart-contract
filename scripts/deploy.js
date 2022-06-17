@@ -34,7 +34,7 @@ async function main() {
 
   const walletAddress = '0xb41b7589ae02a4594cd9314f6b500b387027250b';
   const Locker = await hre.ethers.getContractFactory('Locker');
-  const locker = await Locker.deploy(walletAddress);
+  const locker = await Locker.deploy();
 
   await locker.deployed();
 
