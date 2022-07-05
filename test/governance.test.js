@@ -148,17 +148,42 @@ describe('Governance', () => {
     await governance.connect(vote3).castVote(propId, 1);
     await governance.connect(vote4).castVote(propId, 1);
 
-    // await network.provider.send('evm_mine');
-    // await network.provider.send('evm_mine');
-    // await network.provider.send('evm_mine');
     await network.provider.send('evm_mine');
-    // await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+    await network.provider.send('evm_mine');
+
+    // state check
+    const state1 = await governance.state(propId);
+    console.log(state1);
+
+    // latest block
+    const latestBlock = await hre.ethers.provider.getBlock('latest');
+    console.log(latestBlock);
+
+    // deadline check for proposal
+    const deadline = await governance.proposalDeadline(propId);
+    console.log(deadline);
 
     await governance.queue(
       [locker.address],
       [0],
       [
-        locker.interface.encodeFunctionData('withdrawFunds', [
+        await locker.interface.encodeFunctionData('withdrawFunds', [
           owner.address,
           ethers.utils.parseUnits('1', 18),
         ]),
